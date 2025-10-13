@@ -1,196 +1,176 @@
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xatom.h>
 #include <iostream>
 #include <string>
+#include <vector>
 #include <cstdlib>
 
-class SimpleWindow {
+class TextGUI {
 private:
-    Display* display;
-    Window window;
-    GC gc;
-    int screen;
+    int selectedItem;
+    std::vector<std::string> menuItems;
+
+    void clearScreen() {
+        system("clear");
+    }
+
+    void drawBox(int width, int height) {
+        // Верхняя граница
+        std::cout << "┌";
+        for (int i = 0; i < width - 2; i++) std::cout << "─";
+        std::cout << "┐" << std::endl;
+
+        // Середина
+        for (int i = 0; i < height - 2; i++) {
+            std::cout << "│";
+            for (int j = 0; j < width - 2; j++) std::cout << " ";
+            std::cout << "│" << std::endl;
+        }
+
+        // Нижняя граница
+        std::cout << "└";
+        for (int i = 0; i < width - 2; i++) std::cout << "─";
+        std::cout << "┘" << std::endl;
+    }
 
 public:
-    SimpleWindow() : display(nullptr), window(0), gc(nullptr), screen(0) {}
-    
-    bool initialize() {
-        // Открываем соединение с X-сервером
-        display = XOpenDisplay(nullptr);
-        if (!display) {
-            std::cerr << "Не удалось подключиться к X-серверу" << std::endl;
-            return false;
-        }
-        
-        screen = DefaultScreen(display);
-        
-        // Создаем окно
-        window = XCreateSimpleWindow(
-            display,
-            RootWindow(display, screen),
-            100, 100, 400, 300, 2,
-            BlackPixel(display, screen),
-            WhitePixel(display, screen)
-        );
-        
-        // Устанавливаем заголовок окна
-        XStoreName(display, window, "MINIX X11 Пример");
-        
-        // Выбираем события для обработки
-        XSelectInput(display, window, 
-                    ExposureMask | KeyPressMask | ButtonPressMask | StructureNotifyMask);
-        
-        // Создаем графический контекст
-        gc = XCreateGC(display, window, 0, nullptr);
-        XSetForeground(display, gc, BlackPixel(display, screen));
-        
-        // Показываем окно
-        XMapWindow(display, window);
-        
-        return true;
-    }
-    
-    void run() {
-        XEvent event;
-        bool running = true;
-        
-        while (running) {
-            XNextEvent(display, &event);
-            
-            switch (event.type) {
-                case Expose:
-                    handleExpose();
-                    break;
-                    
-                case KeyPress:
-                    running = handleKeyPress(event);
-                    break;
-                    
-                case ButtonPress:
-                    handleButtonPress(event);
-                    break;
-                    
-                case ConfigureNotify:
-                    handleConfigure(event);
-                    break;
-            }
-        }
-    }
-    
-    void handleExpose() {
-        // Очищаем окно
-        XClearWindow(display, window);
-        
-        // Рисуем текст
-        std::string title = "Добро пожаловать в MINIX!";
-        std::string instruction = "Нажмите любую клавишу для выхода";
-        std::string clickInfo = "Или кликните мышью для изменения цвета";
-        
-        XDrawString(display, window, gc, 50, 50, 
-                   title.c_str(), title.length());
-        XDrawString(display, window, gc, 50, 80, 
-                   instruction.c_str(), instruction.length());
-        XDrawString(display, window, gc, 50, 110, 
-                   clickInfo.c_str(), clickInfo.length());
-        
-        // Рисуем простые фигуры
-        XDrawRectangle(display, window, gc, 50, 150, 100, 60);
-        XFillRectangle(display, window, gc, 200, 150, 100, 60);
-        XDrawArc(display, window, gc, 320, 150, 60, 60, 0, 360 * 64);
-    }
-    
-    bool handleKeyPress(const XEvent& event) {
-        std::cout << "Клавиша нажата. Выход..." << std::endl;
-        return false; // Завершаем программу
-    }
-    
-    void handleButtonPress(const XEvent& event) {
-        // Меняем цвет при клике мыши
-        static int colorIndex = 0;
-        unsigned long colors[] = {
-            BlackPixel(display, screen),
-            WhitePixel(display, screen),
-            RedPixel(display, screen),
-            GreenPixel(display, screen),
-            BluePixel(display, screen)
+    TextGUI() : selectedItem(0) {
+        menuItems = {
+            "Запустить программу",
+            "Настройки",
+            "Справка", 
+            "О программе",
+            "Выход"
         };
-        
-        colorIndex = (colorIndex + 1) % 5;
-        XSetForeground(display, gc, colors[colorIndex]);
-        
-        // Перерисовываем окно
-        XClearWindow(display, window);
-        handleExpose();
     }
-    
-    void handleConfigure(const XEvent& event) {
-        // Обработка изменения размера окна
-        XClearWindow(display, window);
-        handleExpose();
+
+    void showMainMenu() {
+        char input;
+        do {
+            clearScreen();
+            
+            std::cout << "=========================================" << std::endl;
+            std::cout << "        ГРАФИЧЕСКИЙ ИНТЕРФЕЙС MINIX" << std::endl;
+            std::cout << "=========================================" << std::endl;
+            std::cout << std::endl;
+            
+            // Отображение меню
+            for (int i = 0; i < menuItems.size(); i++) {
+                if (i == selectedItem) {
+                    std::cout << " > [" << (i + 1) << "] " << menuItems[i] << " <" << std::endl;
+                } else {
+                    std::cout << "   [" << (i + 1) << "] " << menuItems[i] << std::endl;
+                }
+            }
+            
+            std::cout << std::endl;
+            std::cout << "Используйте W/S для навигации, Enter для выбора" << std::endl;
+            std::cout << "=========================================" << std::endl;
+            
+            input = std::cin.get();
+            std::cin.ignore(); // Очистка буфера
+            
+            switch(input) {
+                case 'w':
+                case 'W':
+                    selectedItem = (selectedItem - 1 + menuItems.size()) % menuItems.size();
+                    break;
+                case 's':
+                case 'S':
+                    selectedItem = (selectedItem + 1) % menuItems.size();
+                    break;
+                case '\n':
+                case '\r':
+                    handleMenuSelection();
+                    break;
+                case '1'...'5':
+                    selectedItem = input - '1';
+                    handleMenuSelection();
+                    break;
+                case 'q':
+                case 'Q':
+                    return;
+            }
+            
+        } while (true);
     }
-    
-    ~SimpleWindow() {
-        if (gc) {
-            XFreeGC(display, gc);
+
+    void handleMenuSelection() {
+        clearScreen();
+        
+        switch(selectedItem) {
+            case 0:
+                showProgramScreen();
+                break;
+            case 1:
+                showSettings();
+                break;
+            case 2:
+                showHelp();
+                break;
+            case 3:
+                showAbout();
+                break;
+            case 4:
+                std::cout << "Выход из программы..." << std::endl;
+                exit(0);
+                break;
         }
-        if (window) {
-            XDestroyWindow(display, window);
-        }
-        if (display) {
-            XCloseDisplay(display);
-        }
+        
+        std::cout << std::endl << "Нажмите Enter для возврата в меню...";
+        std::cin.get();
+    }
+
+    void showProgramScreen() {
+        std::cout << "┌─────────────────────────────────────┐" << std::endl;
+        std::cout << "│         ЗАПУСК ПРОГРАММЫ           │" << std::endl;
+        std::cout << "├─────────────────────────────────────┤" << std::endl;
+        std::cout << "│ Программа выполняется...           │" << std::endl;
+        std::cout << "│                                    │" << std::endl;
+        std::cout << "│ Статус: ██████████ 100%            │" << std::endl;
+        std::cout << "│                                    │" << std::endl;
+        std::cout << "│ Задача завершена успешно!          │" << std::endl;
+        std::cout << "└─────────────────────────────────────┘" << std::endl;
+    }
+
+    void showSettings() {
+        std::cout << "┌─────────────────────────────────────┐" << std::endl;
+        std::cout << "│             НАСТРОЙКИ              │" << std::endl;
+        std::cout << "├─────────────────────────────────────┤" << std::endl;
+        std::cout << "│ □ Автозагрузка                     │" << std::endl;
+        std::cout << "│ □ Логирование                      │" << std::endl;
+        std::cout << "│ □ Высокая производительность       │" << std::endl;
+        std::cout << "│                                    │" << std::endl;
+        std::cout << "│ [Сохранить]  [Отмена]              │" << std::endl;
+        std::cout << "└─────────────────────────────────────┘" << std::endl;
+    }
+
+    void showHelp() {
+        std::cout << "┌─────────────────────────────────────┐" << std::endl;
+        std::cout << "│               СПРАВКА              │" << std::endl;
+        std::cout << "├─────────────────────────────────────┤" << std::endl;
+        std::cout << "│ Управление:                        │" << std::endl;
+        std::cout << "│   W/S - Навигация по меню          │" << std::endl;
+        std::cout << "│   Enter - Выбор пункта             │" << std::endl;
+        std::cout << "│   Q - Выход                        │" << std::endl;
+        std::cout << "│                                    │" << std::endl;
+        std::cout << "│ Это текстовая версия GUI для MINIX │" << std::endl;
+        std::cout << "└─────────────────────────────────────┘" << std::endl;
+    }
+
+    void showAbout() {
+        std::cout << "┌─────────────────────────────────────┐" << std::endl;
+        std::cout << "│             О ПРОГРАММЕ            │" << std::endl;
+        std::cout << "├─────────────────────────────────────┤" << std::endl;
+        std::cout << "│ Текстовый GUI для MINIX            │" << std::endl;
+        std::cout << "│ Версия 1.0                         │" << std::endl;
+        std::cout << "│                                    │" << std::endl;
+        std::cout << "│ Создано для работы без X11         │" << std::endl;
+        std::cout << "│ Использует стандартный ввод/вывод  │" << std::endl;
+        std::cout << "└─────────────────────────────────────┘" << std::endl;
     }
 };
 
-// Вспомогательная функция для получения красного пикселя
-unsigned long RedPixel(Display* display, int screen) {
-    Colormap colormap = DefaultColormap(display, screen);
-    XColor color;
-    color.red = 65535;
-    color.green = 0;
-    color.blue = 0;
-    color.flags = DoRed | DoGreen | DoBlue;
-    XAllocColor(display, colormap, &color);
-    return color.pixel;
-}
-
-// Вспомогательная функция для получения зеленого пикселя
-unsigned long GreenPixel(Display* display, int screen) {
-    Colormap colormap = DefaultColormap(display, screen);
-    XColor color;
-    color.red = 0;
-    color.green = 65535;
-    color.blue = 0;
-    color.flags = DoRed | DoGreen | DoBlue;
-    XAllocColor(display, colormap, &color);
-    return color.pixel;
-}
-
-// Вспомогательная функция для получения синего пикселя
-unsigned long BluePixel(Display* display, int screen) {
-    Colormap colormap = DefaultColormap(display, screen);
-    XColor color;
-    color.red = 0;
-    color.green = 0;
-    color.blue = 65535;
-    color.flags = DoRed | DoGreen | DoBlue;
-    XAllocColor(display, colormap, &color);
-    return color.pixel;
-}
-
 int main() {
-    std::cout << "Запуск графического приложения для MINIX..." << std::endl;
-    
-    SimpleWindow app;
-    
-    if (!app.initialize()) {
-        std::cerr << "Ошибка инициализации приложения" << std::endl;
-        return 1;
-    }
-    
-    app.run();
-    
-    std::cout << "Приложение завершено." << std::endl;
+    TextGUI gui;
+    gui.showMainMenu();
     return 0;
 }
