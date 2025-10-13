@@ -1,6 +1,6 @@
 #include <iostream>
-#include <string>
 #include <vector>
+#include <string>
 #include <cstdlib>
 
 class TextGUI {
@@ -14,12 +14,11 @@ private:
 
 public:
     TextGUI() : selectedItem(0) {
-        // Старый способ инициализации для совместимости
-        menuItems.push_back("Запустить программу");
-        menuItems.push_back("Настройки");
-        menuItems.push_back("Справка");
-        menuItems.push_back("О программе");
-        menuItems.push_back("Выход");
+        menuItems.push_back("Zapustit' programmu");
+        menuItems.push_back("Nastrojki");
+        menuItems.push_back("Spravka");
+        menuItems.push_back("O programme");
+        menuItems.push_back("Vyhod");
     }
 
     void showMainMenu() {
@@ -28,21 +27,21 @@ public:
             clearScreen();
             
             std::cout << "=========================================" << std::endl;
-            std::cout << "        ГРАФИЧЕСКИЙ ИНТЕРФЕЙС MINIX" << std::endl;
+            std::cout << "        GRAFICHESKIJ INTERFEJS MINIX" << std::endl;
             std::cout << "=========================================" << std::endl;
             std::cout << std::endl;
             
-            // Отображение меню
+            // Отображение меню с ASCII символами
             for (int i = 0; i < menuItems.size(); i++) {
                 if (i == selectedItem) {
-                    std::cout << " > [" << (i + 1) << "] " << menuItems[i] << " <" << std::endl;
+                    std::cout << " ==> [" << (i + 1) << "] " << menuItems[i] << " <==" << std::endl;
                 } else {
-                    std::cout << "   [" << (i + 1) << "] " << menuItems[i] << std::endl;
+                    std::cout << "     [" << (i + 1) << "] " << menuItems[i] << std::endl;
                 }
             }
             
             std::cout << std::endl;
-            std::cout << "Используйте W/S для навигации, Enter для выбора" << std::endl;
+            std::cout << "Ispol'zujte W/S dlya navigacii, Enter dlya vybora" << std::endl;
             std::cout << "=========================================" << std::endl;
             
             input = std::cin.get();
@@ -105,62 +104,62 @@ public:
                 showAbout();
                 break;
             case 4:
-                std::cout << "Выход из программы..." << std::endl;
+                std::cout << "Vyhod iz programmy..." << std::endl;
                 exit(0);
                 break;
         }
         
-        std::cout << std::endl << "Нажмите Enter для возврата в меню...";
-        std::cin.ignore(); // Очистка предыдущего ввода
+        std::cout << std::endl << "Najmite Enter dlya vozvrata v menu...";
+        std::cin.ignore();
         std::cin.get();
     }
 
     void showProgramScreen() {
         std::cout << "=========================================" << std::endl;
-        std::cout << "         ЗАПУСК ПРОГРАММЫ" << std::endl;
+        std::cout << "         ZAPUSK PROGRAMMY" << std::endl;
         std::cout << "=========================================" << std::endl;
-        std::cout << " Программа выполняется..." << std::endl;
-        std::cout << " " << std::endl;
-        std::cout << " Статус: [##########] 100%" << std::endl;
-        std::cout << " " << std::endl;
-        std::cout << " Задача завершена успешно!" << std::endl;
+        std::cout << " Programma vypolnyaetsya..." << std::endl;
+        std::cout << std::endl;
+        std::cout << " Status: [==========] 100%" << std::endl;
+        std::cout << std::endl;
+        std::cout << " Zadacha zavershena uspeshno!" << std::endl;
         std::cout << "=========================================" << std::endl;
     }
 
     void showSettings() {
         std::cout << "=========================================" << std::endl;
-        std::cout << "             НАСТРОЙКИ" << std::endl;
+        std::cout << "             NASTROJKI" << std::endl;
         std::cout << "=========================================" << std::endl;
-        std::cout << " [ ] Автозагрузка" << std::endl;
-        std::cout << " [ ] Логирование" << std::endl;
-        std::cout << " [ ] Высокая производительность" << std::endl;
-        std::cout << " " << std::endl;
-        std::cout << " [Сохранить]  [Отмена]" << std::endl;
+        std::cout << " [ ] Avtozagruzka" << std::endl;
+        std::cout << " [ ] Logirovanie" << std::endl;
+        std::cout << " [ ] Vysokaya proizvoditel'nost'" << std::endl;
+        std::cout << std::endl;
+        std::cout << " [Sohranit']  [Otmena]" << std::endl;
         std::cout << "=========================================" << std::endl;
     }
 
     void showHelp() {
         std::cout << "=========================================" << std::endl;
-        std::cout << "               СПРАВКА" << std::endl;
+        std::cout << "               SPRAVKA" << std::endl;
         std::cout << "=========================================" << std::endl;
-        std::cout << " Управление:" << std::endl;
-        std::cout << "   W/S - Навигация по меню" << std::endl;
-        std::cout << "   Enter - Выбор пункта" << std::endl;
-        std::cout << "   Q - Выход" << std::endl;
-        std::cout << " " << std::endl;
-        std::cout << " Это текстовая версия GUI для MINIX" << std::endl;
+        std::cout << " Upravlenie:" << std::endl;
+        std::cout << "   W/S - Navigaciya po menu" << std::endl;
+        std::cout << "   Enter - Vybor punkta" << std::endl;
+        std::cout << "   Q - Vyhod" << std::endl;
+        std::cout << std::endl;
+        std::cout << " Eto tekstovaya versiya GUI dlya MINIX" << std::endl;
         std::cout << "=========================================" << std::endl;
     }
 
     void showAbout() {
         std::cout << "=========================================" << std::endl;
-        std::cout << "             О ПРОГРАММЕ" << std::endl;
+        std::cout << "             O PROGRAMME" << std::endl;
         std::cout << "=========================================" << std::endl;
-        std::cout << " Текстовый GUI для MINIX" << std::endl;
-        std::cout << " Версия 1.0" << std::endl;
-        std::cout << " " << std::endl;
-        std::cout << " Создано для работы без X11" << std::endl;
-        std::cout << " Использует стандартный ввод/вывод" << std::endl;
+        std::cout << " Tekstovyj GUI dlya MINIX" << std::endl;
+        std::cout << " Versiya 1.0" << std::endl;
+        std::cout << std::endl;
+        std::cout << " Sozdano dlya raboty bez X11" << std::endl;
+        std::cout << " Ispol'zuyet standartnyj vvod/vyvod" << std::endl;
         std::cout << "=========================================" << std::endl;
     }
 };
