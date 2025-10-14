@@ -1,0 +1,66 @@
+make.sh:
+#!/bin/sh
+#
+/usr/gnu/bin/g++ test.cpp -o main \
+-I/usr/local/include/Fl \
+-L/usr/local/gnu/lib \
+-L/usr/gnu/lib \
+-L/usr/X11R6-gcc/lib \
+-lstdc++ \
+-lsupc++ \
+-lsys \
+-lfl \
+-lm \
+-lfltk \
+-lfltk_forms \
+-lfltk_images \
+-lfltk_jpeg \
+-lfltk_png \
+-lXinerama \
+-lFS \
+-lICE \
+-lSM \
+-lX11 \
+-lXRes \
+-lXau \
+-lXaw \
+-lXaw3d \
+-lXcomposite \
+-lXcursor \
+-lXdamage \
+-lXdmcp \
+-lXevie \
+-lXext \
+-lXfixes \
+-lXfont \
+-lXft \
+-lXi \
+-lXinerama \
+-lXmu \
+-lXmuu \
+-lXp \
+-lXpm \
+-lXprintAppUtil \
+-lXprintUtil \
+-lXrandr \
+-lXrender \
+-lXss \
+-lXt \
+-lXtst \
+-lXv \
+-lXvMC \
+-lXxf86dga \
+-lXxf86misc \
+-lXxf86vm \
+-ldps \
+-ldpstk \
+-lexpat \
+-lfntstubs \
+-lfontconfig \
+-lfontenc \
+-lfreetype \
+-loldX \
+-lpsres \
+-lxkbfile \
+-lxkbui \
+-lz
