@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+
+
 class SimpleX11GUI {
 private:
     Display* display;
